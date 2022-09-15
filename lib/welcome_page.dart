@@ -24,6 +24,7 @@ class WelcomPage extends StatefulWidget {
 
 class _WelcomPageState extends State<WelcomPage> {
   String dropdownvalue = categories.first;
+  int qtyQuestions = numberOfQuestions.indexOf(11);
   List<String> diff = difficults;
   ValueNotifier<int> selectetDiff = ValueNotifier<int>(0);
 
@@ -35,7 +36,8 @@ class _WelcomPageState extends State<WelcomPage> {
   void startQuiz(String dropdownvalue) async {
     List<Quest> quest;
     //quest = fetchQuests(dropdownvalue);
-    quest = await fetchQuests(dropdownvalue, diff[selectetDiff.value]);
+    quest = await fetchQuests(
+        dropdownvalue, diff[selectetDiff.value], qtyQuestions.toString());
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -48,6 +50,7 @@ class _WelcomPageState extends State<WelcomPage> {
 
   Color getColor(int ind) {
     Color col;
+
     if (ind == selectetDiff.value) {
       col = Color.fromARGB(255, 248, 27, 12);
     } else {
@@ -70,7 +73,7 @@ class _WelcomPageState extends State<WelcomPage> {
             children: [
               Row(
                 children: [
-                  Text('Select Category:'),
+                  Text('Category:'),
                   SizedBox(
                     width: 10,
                   ),
@@ -94,7 +97,7 @@ class _WelcomPageState extends State<WelcomPage> {
               const SizedBox(height: 50, child: Divider()),
               SizedBox(
                 width: MediaQuery.of(context).size.width,
-                child: Text('Select Difficulty:'),
+                child: Text('Difficulty:'),
               ),
               SizedBox(
                 height: 80,
@@ -102,7 +105,7 @@ class _WelcomPageState extends State<WelcomPage> {
                     itemCount: diff.length,
                     itemExtent: 100,
                     shrinkWrap: true,
-                    padding: EdgeInsets.all(5),
+                    padding: const EdgeInsets.all(5),
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (BuildContext, index) {
                       return ValueListenableBuilder(
@@ -123,6 +126,32 @@ class _WelcomPageState extends State<WelcomPage> {
                     }),
               ),
               const SizedBox(height: 50, child: Divider()),
+              Row(
+                children: [
+                  const Text('Number of questions:'),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  SizedBox(
+                    child: DropdownButton(
+                      value: qtyQuestions,
+                      icon: const Icon(Icons.keyboard_arrow_down),
+                      items: numberOfQuestions.map((int items) {
+                        return DropdownMenuItem(
+                          value: items,
+                          child: Text(items.toString()),
+                        );
+                      }).toList(),
+                      onChanged: (int? newValue) {
+                        setState(() {
+                          qtyQuestions = newValue!;
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 50, child: Divider()),
               ElevatedButton.icon(
                   style: ButtonStyle(
                       textStyle: MaterialStateProperty.all(
@@ -130,8 +159,6 @@ class _WelcomPageState extends State<WelcomPage> {
                       backgroundColor: MaterialStateProperty.all(
                           Color.fromARGB(255, 241, 111, 191))),
                   onPressed: () {
-                    // ignore: avoid_print
-
                     startQuiz(dropdownvalue);
                   },
                   icon: const Icon(Icons.play_arrow),
@@ -143,9 +170,9 @@ class _WelcomPageState extends State<WelcomPage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromARGB(255, 241, 111, 191),
         onPressed: () async {
-          List<Quest> quest;
-          //quest = fetchQuests(dropdownvalue);
-          quest = await fetchQuests(dropdownvalue, diff[selectetDiff.value]);
+          //List<Quest> quest;
+          List<Quest> quest = await fetchQuests(
+              dropdownvalue, diff[selectetDiff.value], qtyQuestions.toString());
         },
         child: const Icon(
           Icons.query_builder,
