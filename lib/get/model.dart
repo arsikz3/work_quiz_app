@@ -24,18 +24,17 @@ class Quest {
       );
 }
 
-Future<List<Quest>> fetchQuests(String category) async {
+Future<List<Quest>> fetchQuests(String category, String difficulty) async {
   final List<Quest> quests = [];
   //final url = Uri.parse('https://quizapi.io/api/v1/questions?apiKey=j24WhINsXuMG7PszLmbkLHqRiXRoFnjRZrHxkwDa&category=linux&limit=3');
-  print('Start API');
+  print(category + difficulty);
   final url = Uri.parse(
       'https://quizapi.io/api/v1/questions?apiKey=j24WhINsXuMG7PszLmbkLHqRiXRoFnjRZrHxkwDa&category=devops&limit=3');
   final response = await http.get(url);
 
   if (response.statusCode == 200) {
-    //return Category.fromJson(jsonDecode(response.body));
     List res = json.decode(response.body);
-    //print(res.length);
+
     for (var element in res) {
       Map<String, dynamic> answers = {};
       answers.addAll(element['answers']);
@@ -48,7 +47,6 @@ Future<List<Quest>> fetchQuests(String category) async {
           answers: answers));
     }
 
-    //print(quests[0].answers);
     return quests;
   } else {
     throw Exception('Failed to load Category: $category');

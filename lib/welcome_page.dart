@@ -24,6 +24,8 @@ class WelcomPage extends StatefulWidget {
 
 class _WelcomPageState extends State<WelcomPage> {
   String dropdownvalue = categories.first;
+  List<String> diff = difficults;
+  ValueNotifier<int> selectetDiff = ValueNotifier<int>(0);
 
   @override
   void initState() {
@@ -33,7 +35,7 @@ class _WelcomPageState extends State<WelcomPage> {
   void startQuiz(String dropdownvalue) async {
     List<Quest> quest;
     //quest = fetchQuests(dropdownvalue);
-    quest = await fetchQuests(dropdownvalue);
+    quest = await fetchQuests(dropdownvalue, diff[selectetDiff.value]);
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -42,6 +44,16 @@ class _WelcomPageState extends State<WelcomPage> {
                 questions: quest,
               )),
     );
+  }
+
+  Color getColor(int ind) {
+    Color col;
+    if (ind == selectetDiff.value) {
+      col = Color.fromARGB(255, 248, 27, 12);
+    } else {
+      col = Color.fromARGB(255, 241, 111, 191);
+    }
+    return col;
   }
 
   @override
@@ -58,7 +70,7 @@ class _WelcomPageState extends State<WelcomPage> {
             children: [
               Row(
                 children: [
-                  Text('Выберите категорию:'),
+                  Text('Select Category:'),
                   SizedBox(
                     width: 10,
                   ),
@@ -79,6 +91,38 @@ class _WelcomPageState extends State<WelcomPage> {
                   ),
                 ],
               ),
+              const SizedBox(height: 50, child: Divider()),
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Text('Select Difficulty:'),
+              ),
+              SizedBox(
+                height: 80,
+                child: ListView.builder(
+                    itemCount: diff.length,
+                    itemExtent: 100,
+                    shrinkWrap: true,
+                    padding: EdgeInsets.all(5),
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (BuildContext, index) {
+                      return ValueListenableBuilder(
+                        valueListenable: selectetDiff,
+                        builder: (context, value, child) {
+                          return Card(
+                            shadowColor: Colors.red,
+                            color: getColor(index),
+                            child: ListTile(
+                              onTap: () {
+                                selectetDiff.value = index;
+                              },
+                              subtitle: Text(diff[index]),
+                            ),
+                          );
+                        },
+                      );
+                    }),
+              ),
+              const SizedBox(height: 50, child: Divider()),
               ElevatedButton.icon(
                   style: ButtonStyle(
                       textStyle: MaterialStateProperty.all(
@@ -87,11 +131,11 @@ class _WelcomPageState extends State<WelcomPage> {
                           Color.fromARGB(255, 241, 111, 191))),
                   onPressed: () {
                     // ignore: avoid_print
-                    print(dropdownvalue);
+
                     startQuiz(dropdownvalue);
                   },
                   icon: const Icon(Icons.play_arrow),
-                  label: const Text('Начать тест'))
+                  label: const Text('Test start'))
             ],
           ),
         ),
@@ -101,7 +145,7 @@ class _WelcomPageState extends State<WelcomPage> {
         onPressed: () async {
           List<Quest> quest;
           //quest = fetchQuests(dropdownvalue);
-          quest = await fetchQuests(dropdownvalue);
+          quest = await fetchQuests(dropdownvalue, diff[selectetDiff.value]);
         },
         child: const Icon(
           Icons.query_builder,

@@ -6,4 +6,4 @@ var categories = [
   'Item 5',
 ];
 
-List<String> diff = ['Легкий', 'Средний', 'Сложный', '', ''];
+List<String> difficults = ['Easy', 'Medium', 'Hard'];
