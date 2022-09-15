@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 import 'package:work_quiz_app/get/model.dart';
 //import './question.dart';
@@ -20,24 +22,36 @@ class Quiz extends StatefulWidget {
 }
 
 class _QuizState extends State<Quiz> {
-  //var _value = false;
-  List<bool> _isSelect = [];
+  Map<String, bool> isSelectValues = {};
+  Map<String, bool> RightValues = {
+    'answer_a': true,
+    'answer_b': false,
+    'answer_c': false,
+    'answer_d': false,
+    'answer_e': false,
+    'answer_f': false
+  };
 
-  void setDefisSelected() {
-    _isSelect.clear();
-    for (var item in widget.questions[widget.questionIndex].answers.values) {
-      _isSelect.add(false);
+  void initDefaultAnswer() {
+    for (var item in widget.questions[widget.questionIndex].answers.keys) {
+      final elm = <String, bool>{item: false};
+      isSelectValues.addEntries(elm.entries);
     }
   }
 
   @override
   void initState() {
     super.initState();
-    setDefisSelected();
+    initDefaultAnswer();
+    print('Инит');
   }
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic> answersWithoutNull =
+        widget.questions[widget.questionIndex].answers;
+    answersWithoutNull.removeWhere((key, value) => value == null);
+
     return Column(
       children: [
         Container(
@@ -51,55 +65,29 @@ class _QuizState extends State<Quiz> {
         ),
         Column(
           children: [
-            /*
-            Question(
-              //questions[questionIndex]['questionText'].toString(),
-              questionIndex.toString(),
-            ),
-            */
-
-            /*
-            ...(questions[questionIndex]['answers'] as List<Map<String, Object>>)
-                .map((answer) {
-              return SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    answerQuestion(answer['score']);
-                  },
-                  style: ButtonStyle(
-                      textStyle: MaterialStateProperty.all(
-                          const TextStyle(color: Colors.white)),
-                      backgroundColor: MaterialStateProperty.all(
-                          Color.fromARGB(255, 241, 111, 191))),
-                  child: Text(answer['text'].toString()),
-                ),
-              );
-            }).toList()
-            */
-
             SizedBox(
               height: 400,
               child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount:
-                      widget.questions[widget.questionIndex].answers.length,
+                  itemCount: answersWithoutNull.length,
                   itemBuilder: (context, index) {
-                    final answer = widget
-                        .questions[widget.questionIndex].answers.values
-                        .elementAt(index);
-                    String key = widget
-                        .questions[widget.questionIndex].answers.keys
-                        .elementAt(index);
+                    final answer = answersWithoutNull.values.elementAt(index);
+
+                    String key = answersWithoutNull.keys.elementAt(index);
 
                     return CheckboxListTile(
-                      selected: _isSelect.elementAt(index),
-                      value: _isSelect.elementAt(index),
+                      selected: isSelectValues.entries
+                          .where((element) => element.key == key)
+                          .first
+                          .value,
+                      value: isSelectValues.entries
+                          .where((element) => element.key == key)
+                          .first
+                          .value,
                       onChanged: (_value) {
                         setState(() {
-                          _isSelect[index] = _value!;
-
-                          print(_isSelect.toString());
+                          final elm = <String, bool>{key: _value!};
+                          isSelectValues.addEntries(elm.entries);
                         });
                       },
                       title: Text(
@@ -115,7 +103,12 @@ class _QuizState extends State<Quiz> {
         ElevatedButton.icon(
           icon: const Icon(Icons.navigate_next),
           onPressed: () {
-            setDefisSelected();
+            print(isSelectValues.values.toString());
+            print(RightValues.values.toString());
+            //print(mapEquals(RightValues, isSelectValues));
+            print(isSelectValues.values.toString() ==
+                RightValues.values.toString());
+            initDefaultAnswer();
             widget.answerQuestion(1);
           },
           style: ButtonStyle(
