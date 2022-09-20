@@ -65,7 +65,7 @@ class _QuestionPageState extends State<QuestionPage> {
       home: Scaffold(
         appBar: AppBar(
           title: Text('Quiz API: ${widget.curtheme}'),
-          backgroundColor: Color.fromARGB(255, 241, 111, 191),
+          backgroundColor: const Color.fromARGB(255, 241, 111, 191),
         ),
         body: Padding(
           padding: const EdgeInsets.all(30.0),

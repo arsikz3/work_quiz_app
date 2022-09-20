@@ -52,9 +52,9 @@ class _WelcomPageState extends State<WelcomPage> {
     Color col;
 
     if (ind == selectetDiff.value) {
-      col = Color.fromARGB(255, 248, 27, 12);
-    } else {
       col = Color.fromARGB(255, 241, 111, 191);
+    } else {
+      col = Color.fromARGB(255, 173, 168, 168);
     }
     return col;
   }
@@ -165,17 +165,6 @@ class _WelcomPageState extends State<WelcomPage> {
                   label: const Text('Test start'))
             ],
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color.fromARGB(255, 241, 111, 191),
-        onPressed: () async {
-          //List<Quest> quest;
-          List<Quest> quest = await fetchQuests(
-              dropdownvalue, diff[selectetDiff.value], qtyQuestions.toString());
-        },
-        child: const Icon(
-          Icons.query_builder,
         ),
       ),
     );
