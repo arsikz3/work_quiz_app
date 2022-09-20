@@ -1,8 +1,5 @@
-import 'package:flutter/foundation.dart';
-
 import 'package:flutter/material.dart';
 import 'package:work_quiz_app/get/model.dart';
-//import './question.dart';
 
 class Quiz extends StatefulWidget {
   //final List<Map<String, Object>> questions;
@@ -22,19 +19,11 @@ class Quiz extends StatefulWidget {
 }
 
 class _QuizState extends State<Quiz> {
-  Map<String, bool> isSelectValues = {};
-  Map<String, bool> RightValues = {
-    'answer_a': true,
-    'answer_b': false,
-    'answer_c': false,
-    'answer_d': false,
-    'answer_e': false,
-    'answer_f': false
-  };
+  Map<String, String> isSelectValues = {};
 
   void initDefaultAnswer() {
     for (var item in widget.questions[widget.questionIndex].answers.keys) {
-      final elm = <String, bool>{item: false};
+      final elm = <String, String>{item: 'false'};
       isSelectValues.addEntries(elm.entries);
     }
   }
@@ -43,7 +32,6 @@ class _QuizState extends State<Quiz> {
   void initState() {
     super.initState();
     initDefaultAnswer();
-    print('Инит');
   }
 
   @override
@@ -51,6 +39,9 @@ class _QuizState extends State<Quiz> {
     Map<String, dynamic> answersWithoutNull =
         widget.questions[widget.questionIndex].answers;
     answersWithoutNull.removeWhere((key, value) => value == null);
+
+    Map<String, dynamic> correctAnswers =
+        widget.questions[widget.questionIndex].correctAnswers;
 
     return Column(
       children: [
@@ -60,6 +51,15 @@ class _QuizState extends State<Quiz> {
           child: Text(
             widget.questions[widget.questionIndex].question,
             style: const TextStyle(fontSize: 16),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        Container(
+          width: double.infinity,
+          margin: const EdgeInsets.all(5),
+          child: Text(
+            'description' + widget.questions[widget.questionIndex].description,
+            style: const TextStyle(fontSize: 12),
             textAlign: TextAlign.center,
           ),
         ),
@@ -74,19 +74,17 @@ class _QuizState extends State<Quiz> {
                     final answer = answersWithoutNull.values.elementAt(index);
 
                     String key = answersWithoutNull.keys.elementAt(index);
+                    String _isChecked = isSelectValues.entries
+                        .where((element) => element.key == key)
+                        .first
+                        .value;
 
                     return CheckboxListTile(
-                      selected: isSelectValues.entries
-                          .where((element) => element.key == key)
-                          .first
-                          .value,
-                      value: isSelectValues.entries
-                          .where((element) => element.key == key)
-                          .first
-                          .value,
+                      selected: _isChecked == 'false' ? false : true,
+                      value: _isChecked == 'false' ? false : true,
                       onChanged: (_value) {
                         setState(() {
-                          final elm = <String, bool>{key: _value!};
+                          final elm = <String, String>{key: _value!.toString()};
                           isSelectValues.addEntries(elm.entries);
                         });
                       },
@@ -103,19 +101,17 @@ class _QuizState extends State<Quiz> {
         ElevatedButton.icon(
           icon: const Icon(Icons.navigate_next),
           onPressed: () {
-            print(isSelectValues.values.toString());
-            print(RightValues.values.toString());
-            //print(mapEquals(RightValues, isSelectValues));
-            print(isSelectValues.values.toString() ==
-                RightValues.values.toString());
+            bool _answerisCorrect = isSelectValues.values.toString() ==
+                correctAnswers.values.toString();
+
+            widget.answerQuestion(_answerisCorrect ? 1 : 0);
             initDefaultAnswer();
-            widget.answerQuestion(1);
           },
           style: ButtonStyle(
               textStyle: MaterialStateProperty.all(
                   const TextStyle(color: Colors.white)),
               backgroundColor: MaterialStateProperty.all(
-                  Color.fromARGB(255, 241, 111, 191))),
+                  const Color.fromARGB(255, 241, 111, 191))),
           label: const Text(
             'Next',
             style: TextStyle(color: Colors.black),

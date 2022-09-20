@@ -7,20 +7,29 @@ class Quest {
       required this.question,
       required this.category,
       required this.difficulty,
-      required this.answers});
+      required this.description,
+      required this.multipleCorrectAnswers,
+      required this.answers,
+      required this.correctAnswers});
 
   int id;
   String question;
   String category;
   String difficulty;
+  String description;
+  String multipleCorrectAnswers;
   Map<String, dynamic> answers;
+  Map<String, dynamic> correctAnswers;
 
   factory Quest.fromJson(Map<String, dynamic> json) => Quest(
         id: json["id"],
         question: json["question"],
         category: json["category"],
+        description: json["description"],
+        multipleCorrectAnswers: json["category"],
         difficulty: json["difficulty"],
         answers: {},
+        correctAnswers: {},
       );
 }
 
@@ -51,15 +60,20 @@ Future<List<Quest>> fetchQuests(
     List res = json.decode(response.body);
 
     for (var element in res) {
-      Map<String, dynamic> answers = {};
-      answers.addAll(element['answers']);
+      Map<String, dynamic> _answers = {};
+      Map<String, dynamic> _correctAnswers = {};
 
+      _answers.addAll(element['answers']);
+      _correctAnswers.addAll(element['correct_answers']);
       quests.add(Quest(
           id: element['id'],
           question: element['question'],
           category: element['category'],
-          difficulty: element['difficulty'],
-          answers: answers));
+          description: element['description'] ?? '',
+          difficulty: element['multiple_correct_answers'],
+          multipleCorrectAnswers: element['difficulty'],
+          answers: _answers,
+          correctAnswers: _correctAnswers));
     }
 
     return quests;

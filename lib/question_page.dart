@@ -39,9 +39,10 @@ class _QuestionPageState extends State<QuestionPage> {
   }
 
   void _answerQuestion(int score) {
+    print('score $score!');
     _totalScore += score;
     // ignore: avoid_print
-    //print('Total $_totalScore!');
+    print('Total $_totalScore!');
 
     setState(() {
       _questionIndex = _questionIndex + 1;
